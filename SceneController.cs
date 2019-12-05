@@ -8,6 +8,11 @@ using System.Windows.Forms;
 
 namespace GeometricModeling
 {
+	/// <summary>
+	/// Контроллер сцены.null Он хранит в себе неизменные точки и матрицы афинных преобразований. 
+	/// По вызову метода <see cref="Render(ref PictureBox)"/> отрисовывает все точки и линии по связям.
+	/// Реализует интерфейс <see cref="IScene"/>, который в свою очередь предоставляет интерфейсы афинных преобразований.
+	/// </summary>
 	class SceneController :IScene
 	{
 		MatrixTransform _movingMatrix = new MatrixTransform();
@@ -20,13 +25,20 @@ namespace GeometricModeling
 
 		public List<Point> Points { get; set; }
 		public List<Connection> Connections { get; set; }
+
+		/// <summary>
+		/// Размер отрисовываемой сцены. Необходим для переноса абсолютных координат к координатам окна представления.
+		/// Т.е. центрирует начало координат не в левом верхнем углу, а по центру представления.
+		/// </summary>
 		public Size Size
 		{
 			get => _size; set
 			{
 				_size = value;
+				// Делаем матрицу отражения относительно оси ОХ
 				_sceneAdjustment = new MatrixTransform();
 				_sceneAdjustment.Matrix[1, 1] = -1;
+				// Переносим все координаты на растояния половины представления
 				_sceneAdjustment *= MatrixTransform.GetTranslation(new Point() { X = value.Width / 2, Y = value.Height / 2, H = 1.0 });
 			}
 		}
@@ -74,6 +86,9 @@ namespace GeometricModeling
 			_oppMatrix *= MatrixTransform.GetOppZ(focus);
 		}
 
+        /// <summary>
+        /// Сбрасывает все преобразования до единичных матриц.
+        /// </summary>
 		public void Default()
 		{
 			_movingMatrix = new MatrixTransform();
@@ -116,6 +131,9 @@ namespace GeometricModeling
 					plane.DrawLine(new Pen(new SolidBrush(Color.Black), 1), (float)p1.X, (float)p1.Y, (float)p2.X, (float)p2.Y);
 				}
 			}
+
+            // Нарисовать осевые линии
+
 			Point o = new Point() { H = 1 };
 			Point x = new Point() { H = 1, X = 20 };
 			Point y = new Point() { H = 1, Y = 20 };
@@ -124,17 +142,17 @@ namespace GeometricModeling
 			var tempPoint1 = o * _scaleMatrix * _rotateMatrix * _movingMatrix * _shearMatrix * _oppMatrix * _sceneAdjustment;
 			var tempPoint2 = x * _scaleMatrix * _rotateMatrix * _movingMatrix * _shearMatrix * _oppMatrix * _sceneAdjustment;
 
-			plane.DrawLine(new Pen(new SolidBrush(Color.Cyan), 1), (float)tempPoint1.X, (float)tempPoint1.Y,
+			plane.DrawLine(new Pen(new SolidBrush(Color.Green), 1), (float)tempPoint1.X, (float)tempPoint1.Y,
 				(float)tempPoint2.X, (float)tempPoint2.Y);
 
 			tempPoint2 = y * _scaleMatrix * _rotateMatrix * _movingMatrix * _shearMatrix * _oppMatrix * _sceneAdjustment;
 
-			plane.DrawLine(new Pen(new SolidBrush(Color.Green), 1), (float)tempPoint1.X, (float)tempPoint1.Y,
+			plane.DrawLine(new Pen(new SolidBrush(Color.Red), 1), (float)tempPoint1.X, (float)tempPoint1.Y,
 				(float)tempPoint2.X, (float)tempPoint2.Y);
 
 			tempPoint2 = z * _scaleMatrix * _rotateMatrix * _movingMatrix * _shearMatrix * _oppMatrix * _sceneAdjustment;
 
-			plane.DrawLine(new Pen(new SolidBrush(Color.Yellow), 1), (float)tempPoint1.X, (float)tempPoint1.Y,
+			plane.DrawLine(new Pen(new SolidBrush(Color.Blue), 1), (float)tempPoint1.X, (float)tempPoint1.Y,
 				(float)tempPoint2.X, (float)tempPoint2.Y);
 		}
 
@@ -213,10 +231,15 @@ namespace GeometricModeling
 			_shearMatrix *= MatrixTransform.GetShearZToY(value);
 		}
 
-
+        /// <summary>
+        /// Метод вписывания в представление
+        /// </summary>
 		public void Enter()
 		{
 			bool isFull = false;
+			// Пока сцена не вписана повторяем перенос и масштабирование
+			// Такой алгоритм нужен для того, чтобы при ОПП корректно вписывать. 
+			// Так как при перемещении и маштабировании по отдельности размеры сцены могут меняться.
 			do
 			{
 				RectangleF scene = GetScene();
@@ -224,7 +247,12 @@ namespace GeometricModeling
 				scene = GetScene();
 				Moving(scene);
 				scene = GetScene();
-
+                /* Достаточно сложное условие получилось
+				 * Тут главное что ширина и высота получившейся сцены должны быть меньше размеров представления на 10 пикселей
+				 * Но чтобы как минимум одна из размерностей была больше размерности представления при прибавлении 20 пикселей
+				 * Иными словами: недостаточно уменьшить изображение чтобы оно вписалось, нужно ещё его приблизить, если оно маленькое.
+				 * Затем смотрю центр сцены, если он находится в начале координат, то ок. Иначе продолжаем преобразовывать
+				 */
 				if (scene.Width + 10 <= Size.Width && scene.Height + 10 <= Size.Height && 
 					(scene.Width + 20 >= Size.Width || scene.Height + 20 >= Size.Height) && 
 					Math.Round(scene.Width + scene.X) == Math.Round(scene.Width /2) && Math.Round(scene.Height - scene.Y) == Math.Round(scene.Height / 2))
@@ -233,60 +261,7 @@ namespace GeometricModeling
 			while (!isFull);
 
 
-			//List<Point> points = new List<Point>();
-
-			//foreach (var point in Points)
-			//{
-			//	Point p = point * _scaleMatrix;
-			//	p *= _rotateMatrix;
-			//	p *= _movingMatrix;
-			//	p *= _shearMatrix;
-			//	p *= _oppMatrix;
-			//	points.Add(p);
-			//}
-
-			//double maxX = double.MinValue, maxY = double.MinValue,
-			//	minX = double.MaxValue, minY = double.MaxValue;
-			//foreach (var point in points)
-			//{
-			//	maxX = point.X >= maxX ? point.X : maxX;
-			//	maxY = point.Y >= maxY ? point.Y : maxY;
-
-			//	minX = point.X <= minX ? point.X : minX;
-			//	minY = point.Y <= minY ? point.Y : minY;
-			//}
-
-			//double scaleX = (Size.Width - 10) / (maxX - minX);
-			//double scaleY = (Size.Height - 10) / (maxY - minY);
-			//double scale = scaleX < scaleY ? scaleX : scaleY;
-			//_scaleMatrix *= MatrixTransform.GetScaleX(scale) * MatrixTransform.GetScaleY(scale) * MatrixTransform.GetScaleZ(scale);
-
-			//points.Clear();
-			//foreach (var point in Points)
-			//{
-			//	Point p = point * _scaleMatrix;
-			//	p *= _rotateMatrix;
-			//	p *= _movingMatrix;
-			//	p *= _shearMatrix;
-			//	p *= _oppMatrix;
-			//	points.Add(p);
-			//}
-
-			//maxX = double.MinValue;
-			//maxY = double.MinValue;
-			//minX = double.MaxValue;
-			//minY = double.MaxValue;
-			//foreach (var point in points)
-			//{
-			//	maxX = point.X >= maxX ? point.X : maxX;
-			//	maxY = point.Y >= maxY ? point.Y : maxY;
-
-			//	minX = point.X <= minX ? point.X : minX;
-			//	minY = point.Y <= minY ? point.Y : minY;
-			//}
-
-			//PointF center = new PointF((float)((maxX - minX) / 2 + minX), (float)((maxY - minY) / 2 + minY));
-			//_movingMatrix *= MatrixTransform.GetTranslation(new Point() { X = -center.X, Y = -center.Y, H = 1.0 });
+			
 		}
 
 		private void Moving(RectangleF scene)

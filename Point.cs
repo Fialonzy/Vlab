@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace GeometricModeling
 {
-    class Point :IObjectScene
+    class Point
     {
         public double this[int key]{
             get {
@@ -22,17 +22,6 @@ namespace GeometricModeling
         public double Z { get; set; }
         public double H { get; set; }
 
-		public void Draw(MatrixTransform matrix, Graphics plane)
-		{
-			Point p = this * matrix;
-			plane.FillEllipse(new SolidBrush(Color.DarkRed), (float)p.X - 1, (float)p.Y - 1, 2, 2);
-		}
-
-		public string GetDescription()
-		{
-			return $"Точка ({X}, {Y}, {Z}, {H})";
-		}
-
 		public static Point operator*(Point point, MatrixTransform matrix)
         {
             Point p = new Point();
@@ -48,5 +37,9 @@ namespace GeometricModeling
 
 			return p;
         }
+
+        public override string  ToString(){
+            return $"({X}, {Y}, {Z}, {H})";
+        } 
     }
 }

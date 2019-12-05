@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,6 @@ namespace GeometricModeling
 	{
 		private IScene _scene;
 		private SceneBuilder _sceneBuilder;
-		Graphics _plane;
 
 		public Form1()
 		{
@@ -24,10 +24,6 @@ namespace GeometricModeling
 
 			openFileDialog1.Filter = "Text files(*.txt)|*.txt|All files(*.*)|*.*";
 			openFileDialog1.FileName = null;
-
-			var bitmap = new Bitmap(pictureBox1.Size.Width, pictureBox1.Size.Height);
-			_plane = Graphics.FromImage(bitmap);
-			pictureBox1.Image = bitmap;
 		}
 
 		private void button1_Click(object sender, EventArgs e)
@@ -35,7 +31,13 @@ namespace GeometricModeling
 			if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
 				return;
 			string path = openFileDialog1.FileName;
-			_sceneBuilder.ReadSceneFromFile(path);
+			try{
+			_sceneBuilder.ReadSceneFromFile(path);}
+			catch (Exception ex){
+				MessageBox.Show($"Не удалось загрузить сцену. \n{ex.Message}", "Ошибка загрузки сцены", 
+				    MessageBoxButtons.OK,MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly, false);
+				return;	
+			}
 			_sceneBuilder.SetSizeScene(pictureBox1.Size);
 			_scene = _sceneBuilder.Build();
 			_scene.Scale(trackBar1.Value);
@@ -47,8 +49,6 @@ namespace GeometricModeling
 			if (_scene == null) return;
 			_scene.Size = pictureBox1.Size;
 			_scene.Render(ref pictureBox1);
-			//Bitmap bmp = new Bitmap(pictureBox1.Size.Width, pictureBox1.Size.Height, _plane);
-			//pictureBox1.Image = bmp;
 		}
 
 		private void trackBar1_ValueChanged(object sender, EventArgs e)
@@ -199,6 +199,9 @@ namespace GeometricModeling
 					else
 						_scene.RotateX(10.0 * Math.PI / 180.0);
 					break;
+				case Keys.C:
+					button11_Click(null, null);
+					break;
 			}
 			_scene.Render(ref pictureBox1);
 		}
@@ -214,12 +217,12 @@ namespace GeometricModeling
 			if (_scene == null) return;
 			try
 			{
-				if (!string.IsNullOrEmpty(textBoxShearXY.Text)) _scene.ShearXToY(Convert.ToDouble(textBoxShearXY.Text));
-				if (!string.IsNullOrEmpty(textBoxShearXZ.Text)) _scene.ShearXToZ(Convert.ToDouble(textBoxShearXZ.Text));
-				if (!string.IsNullOrEmpty(textBoxShearYX.Text)) _scene.ShearYToX(Convert.ToDouble(textBoxShearYX.Text));
-				if (!string.IsNullOrEmpty(textBoxShearYZ.Text)) _scene.ShearYToZ(Convert.ToDouble(textBoxShearYZ.Text));
-				if (!string.IsNullOrEmpty(textBoxShearZX.Text)) _scene.ShearZToX(Convert.ToDouble(textBoxShearZX.Text));
-				if (!string.IsNullOrEmpty(textBoxShearZY.Text)) _scene.ShearZToY(Convert.ToDouble(textBoxShearZY.Text));
+				if (!string.IsNullOrEmpty(textBoxShearXY.Text)) _scene.ShearXToY(Convert.ToDouble(textBoxShearXY.Text, new CultureInfo("en")));
+				if (!string.IsNullOrEmpty(textBoxShearXZ.Text)) _scene.ShearXToZ(Convert.ToDouble(textBoxShearXZ.Text, new CultureInfo("en")));
+				if (!string.IsNullOrEmpty(textBoxShearYX.Text)) _scene.ShearYToX(Convert.ToDouble(textBoxShearYX.Text, new CultureInfo("en")));
+				if (!string.IsNullOrEmpty(textBoxShearYZ.Text)) _scene.ShearYToZ(Convert.ToDouble(textBoxShearYZ.Text, new CultureInfo("en")));
+				if (!string.IsNullOrEmpty(textBoxShearZX.Text)) _scene.ShearZToX(Convert.ToDouble(textBoxShearZX.Text, new CultureInfo("en")));
+				if (!string.IsNullOrEmpty(textBoxShearZY.Text)) _scene.ShearZToY(Convert.ToDouble(textBoxShearZY.Text, new CultureInfo("en")));
 			}
 			catch
 			{
@@ -240,9 +243,9 @@ namespace GeometricModeling
 			if (_scene == null) return;
 			try
 			{
-				if (!string.IsNullOrEmpty(textBoxOppX.Text)) _scene.OppX(Convert.ToDouble(textBoxOppX.Text));
-				if (!string.IsNullOrEmpty(textBoxOppY.Text)) _scene.OppY(Convert.ToDouble(textBoxOppY.Text));
-				if (!string.IsNullOrEmpty(textBoxOppZ.Text)) _scene.OppZ(Convert.ToDouble(textBoxOppZ.Text));
+				if (!string.IsNullOrEmpty(textBoxOppX.Text)) _scene.OppX(Convert.ToDouble(textBoxOppX.Text, new CultureInfo("en")));
+				if (!string.IsNullOrEmpty(textBoxOppY.Text)) _scene.OppY(Convert.ToDouble(textBoxOppY.Text, new CultureInfo("en")));
+				if (!string.IsNullOrEmpty(textBoxOppZ.Text)) _scene.OppZ(Convert.ToDouble(textBoxOppZ.Text, new CultureInfo("en")));
 			}
 			catch
 			{
@@ -264,7 +267,7 @@ namespace GeometricModeling
 
 		private void button3_Click(object sender, EventArgs e)
 		{
-			button14_Click(null, null);
+			button11_Click(null, null);
 		}
 	}
 }

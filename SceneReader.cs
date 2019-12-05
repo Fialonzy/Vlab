@@ -8,7 +8,6 @@ namespace GeometricModeling{
     class SceneReader
     {
 		private Point[] _points;
-		private Line[] _lines;
 		private Connection[] _connections;
 
 		public void ReadFile(string path, out List<Point> points, out List<Connection> connections)
@@ -35,7 +34,6 @@ namespace GeometricModeling{
 			if (countLine < 1) return;
 			if (lines.Count < countPoint + countLine + 2) throw new Exception("Количество строк меньше количества связей.");
 
-			//GetLines(lines.GetRange(1 + countPoint + 1, countLine));
 			GetConnections(lines.GetRange(1 + countPoint + 1, countLine));
 		}
 
@@ -76,17 +74,6 @@ namespace GeometricModeling{
 			}
 		}
 
-		private void GetLines(List<string> lines)
-		{
-			int lineCount = lines.Count;
-			_lines = new Line[lineCount];
-
-			for (int i = 0; i < lineCount; i++)
-			{
-				_lines[i] = ReadLine(lines[i]);
-			}
-		}
-
 		private void CheckFile(string path)
 		{
 			string catalog = Path.GetDirectoryName(path);
@@ -124,18 +111,5 @@ namespace GeometricModeling{
 			}
 			return p;
         }
-
-		private Line ReadLine(string str)
-		{
-			var indexs = str.Trim().Split(' ');
-			if (indexs.Length != 2)
-				throw new Exception($"Неверные данные.\n{str}\n В строке сввязи точек указаны {indexs.Length} аргументов, когда необходимо 2.");
-			int startIndex = int.Parse(indexs[0]), endIndex = int.Parse(indexs[1]);
-			if (_points.Length < startIndex || _points.Length < endIndex)
-				throw new Exception($"Неверные даныне.\n{str}\n Указанные индексы точек находятся вне диапазона массива точек.");
-			Line line = new Line(_points[startIndex], _points[endIndex]);
-
-			return line;
-		}
 	}
 }
