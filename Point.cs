@@ -22,6 +22,31 @@ namespace GeometricModeling
         public double Z { get; set; }
         public double H { get; set; }
 
+        public Point(double x=0, double y=0, double z=0, double h=1)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+            H = h;
+        }
+        public static Point operator * (Point point, double coefficient){
+            Point p = new Point();
+            p.X = point.X * coefficient;
+            p.Y = point.Y * coefficient;
+            p.Z = point.Z * coefficient;
+            //p.H = point.H * coefficient;
+            return p;
+        }
+
+        public static Point operator * (double coefficient,Point point){
+            Point p = new Point();
+            p.X = point.X * coefficient;
+            p.Y = point.Y * coefficient;
+            p.Z = point.Z * coefficient;
+            //p.H = point.H * coefficient;
+            return p;
+        }
+
 		public static Point operator*(Point point, MatrixTransform matrix)
         {
             Point p = new Point();
@@ -36,6 +61,16 @@ namespace GeometricModeling
 			p.H /= p.H;
 
 			return p;
+        }
+
+        public static Point operator+(Point a, Point b){
+            Point result = new Point();
+            result.X = a.X + b.X;
+            result.Y = a.Y + b.Y;
+            result.Z = a.Z + b.Z;
+            //result.H = a.H + b.H;
+            // TODO: Normalize
+            return result;
         }
 
         public override string  ToString(){

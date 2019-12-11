@@ -31,6 +31,28 @@
 			this.button1 = new System.Windows.Forms.Button();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this.button14 = new System.Windows.Forms.Button();
+			this.button13 = new System.Windows.Forms.Button();
+			this.label10 = new System.Windows.Forms.Label();
+			this.textBoxOppZ = new System.Windows.Forms.TextBox();
+			this.label9 = new System.Windows.Forms.Label();
+			this.textBoxOppY = new System.Windows.Forms.TextBox();
+			this.label8 = new System.Windows.Forms.Label();
+			this.textBoxOppX = new System.Windows.Forms.TextBox();
+			this.button12 = new System.Windows.Forms.Button();
+			this.label7 = new System.Windows.Forms.Label();
+			this.textBoxShearZY = new System.Windows.Forms.TextBox();
+			this.label6 = new System.Windows.Forms.Label();
+			this.textBoxShearZX = new System.Windows.Forms.TextBox();
+			this.label5 = new System.Windows.Forms.Label();
+			this.textBoxShearYZ = new System.Windows.Forms.TextBox();
+			this.label4 = new System.Windows.Forms.Label();
+			this.textBoxShearYX = new System.Windows.Forms.TextBox();
+			this.label3 = new System.Windows.Forms.Label();
+			this.textBoxShearXZ = new System.Windows.Forms.TextBox();
+			this.label2 = new System.Windows.Forms.Label();
+			this.textBoxShearXY = new System.Windows.Forms.TextBox();
+			this.label1 = new System.Windows.Forms.Label();
 			this.button11 = new System.Windows.Forms.Button();
 			this.trackBar1 = new System.Windows.Forms.TrackBar();
 			this.button10 = new System.Windows.Forms.Button();
@@ -43,28 +65,9 @@
 			this.button3 = new System.Windows.Forms.Button();
 			this.button2 = new System.Windows.Forms.Button();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
-			this.label1 = new System.Windows.Forms.Label();
-			this.textBoxShearXY = new System.Windows.Forms.TextBox();
-			this.label2 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
-			this.textBoxShearXZ = new System.Windows.Forms.TextBox();
-			this.label4 = new System.Windows.Forms.Label();
-			this.textBoxShearYX = new System.Windows.Forms.TextBox();
-			this.label5 = new System.Windows.Forms.Label();
-			this.textBoxShearYZ = new System.Windows.Forms.TextBox();
-			this.label6 = new System.Windows.Forms.Label();
-			this.textBoxShearZX = new System.Windows.Forms.TextBox();
-			this.label7 = new System.Windows.Forms.Label();
-			this.textBoxShearZY = new System.Windows.Forms.TextBox();
-			this.button12 = new System.Windows.Forms.Button();
-			this.label8 = new System.Windows.Forms.Label();
-			this.textBoxOppX = new System.Windows.Forms.TextBox();
-			this.label9 = new System.Windows.Forms.Label();
-			this.textBoxOppY = new System.Windows.Forms.TextBox();
-			this.label10 = new System.Windows.Forms.Label();
-			this.textBoxOppZ = new System.Windows.Forms.TextBox();
-			this.button13 = new System.Windows.Forms.Button();
-			this.button14 = new System.Windows.Forms.Button();
+			this.textBoxApproxymation = new System.Windows.Forms.TextBox();
+			this.label11 = new System.Windows.Forms.Label();
+			this.button15 = new System.Windows.Forms.Button();
 			this.panel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -84,6 +87,9 @@
 			// 
 			this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.panel1.Controls.Add(this.button15);
+			this.panel1.Controls.Add(this.label11);
+			this.panel1.Controls.Add(this.textBoxApproxymation);
 			this.panel1.Controls.Add(this.button14);
 			this.panel1.Controls.Add(this.button13);
 			this.panel1.Controls.Add(this.label10);
@@ -122,6 +128,189 @@
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(189, 640);
 			this.panel1.TabIndex = 2;
+			// 
+			// button14
+			// 
+			this.button14.Location = new System.Drawing.Point(33, 61);
+			this.button14.Name = "button14";
+			this.button14.Size = new System.Drawing.Size(117, 23);
+			this.button14.TabIndex = 32;
+			this.button14.Text = "Default";
+			this.button14.UseVisualStyleBackColor = true;
+			this.button14.Click += new System.EventHandler(this.button14_Click);
+			// 
+			// button13
+			// 
+			this.button13.Location = new System.Drawing.Point(112, 384);
+			this.button13.Name = "button13";
+			this.button13.Size = new System.Drawing.Size(55, 23);
+			this.button13.TabIndex = 31;
+			this.button13.Text = "Apply";
+			this.button13.UseVisualStyleBackColor = true;
+			this.button13.Click += new System.EventHandler(this.button13_Click);
+			// 
+			// label10
+			// 
+			this.label10.AutoSize = true;
+			this.label10.Location = new System.Drawing.Point(115, 340);
+			this.label10.Name = "label10";
+			this.label10.Size = new System.Drawing.Size(39, 13);
+			this.label10.TabIndex = 30;
+			this.label10.Text = "OPP Z";
+			// 
+			// textBoxOppZ
+			// 
+			this.textBoxOppZ.Location = new System.Drawing.Point(118, 358);
+			this.textBoxOppZ.Name = "textBoxOppZ";
+			this.textBoxOppZ.Size = new System.Drawing.Size(42, 20);
+			this.textBoxOppZ.TabIndex = 29;
+			// 
+			// label9
+			// 
+			this.label9.AutoSize = true;
+			this.label9.Location = new System.Drawing.Point(115, 299);
+			this.label9.Name = "label9";
+			this.label9.Size = new System.Drawing.Size(39, 13);
+			this.label9.TabIndex = 28;
+			this.label9.Text = "OPP Y";
+			// 
+			// textBoxOppY
+			// 
+			this.textBoxOppY.Location = new System.Drawing.Point(118, 317);
+			this.textBoxOppY.Name = "textBoxOppY";
+			this.textBoxOppY.Size = new System.Drawing.Size(42, 20);
+			this.textBoxOppY.TabIndex = 27;
+			// 
+			// label8
+			// 
+			this.label8.AutoSize = true;
+			this.label8.Location = new System.Drawing.Point(115, 258);
+			this.label8.Name = "label8";
+			this.label8.Size = new System.Drawing.Size(39, 13);
+			this.label8.TabIndex = 26;
+			this.label8.Text = "OPP X";
+			// 
+			// textBoxOppX
+			// 
+			this.textBoxOppX.Location = new System.Drawing.Point(118, 276);
+			this.textBoxOppX.Name = "textBoxOppX";
+			this.textBoxOppX.Size = new System.Drawing.Size(42, 20);
+			this.textBoxOppX.TabIndex = 25;
+			// 
+			// button12
+			// 
+			this.button12.Location = new System.Drawing.Point(12, 384);
+			this.button12.Name = "button12";
+			this.button12.Size = new System.Drawing.Size(55, 23);
+			this.button12.TabIndex = 24;
+			this.button12.Text = "Apply";
+			this.button12.UseVisualStyleBackColor = true;
+			this.button12.Click += new System.EventHandler(this.button12_Click);
+			// 
+			// label7
+			// 
+			this.label7.AutoSize = true;
+			this.label7.Location = new System.Drawing.Point(9, 340);
+			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size(52, 13);
+			this.label7.TabIndex = 23;
+			this.label7.Text = "Shear ZY";
+			// 
+			// textBoxShearZY
+			// 
+			this.textBoxShearZY.Location = new System.Drawing.Point(12, 358);
+			this.textBoxShearZY.Name = "textBoxShearZY";
+			this.textBoxShearZY.Size = new System.Drawing.Size(42, 20);
+			this.textBoxShearZY.TabIndex = 22;
+			// 
+			// label6
+			// 
+			this.label6.AutoSize = true;
+			this.label6.Location = new System.Drawing.Point(9, 299);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(52, 13);
+			this.label6.TabIndex = 21;
+			this.label6.Text = "Shear ZX";
+			// 
+			// textBoxShearZX
+			// 
+			this.textBoxShearZX.Location = new System.Drawing.Point(12, 317);
+			this.textBoxShearZX.Name = "textBoxShearZX";
+			this.textBoxShearZX.Size = new System.Drawing.Size(42, 20);
+			this.textBoxShearZX.TabIndex = 20;
+			// 
+			// label5
+			// 
+			this.label5.AutoSize = true;
+			this.label5.Location = new System.Drawing.Point(9, 258);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(52, 13);
+			this.label5.TabIndex = 19;
+			this.label5.Text = "Shear YZ";
+			// 
+			// textBoxShearYZ
+			// 
+			this.textBoxShearYZ.Location = new System.Drawing.Point(12, 276);
+			this.textBoxShearYZ.Name = "textBoxShearYZ";
+			this.textBoxShearYZ.Size = new System.Drawing.Size(42, 20);
+			this.textBoxShearYZ.TabIndex = 18;
+			// 
+			// label4
+			// 
+			this.label4.AutoSize = true;
+			this.label4.Location = new System.Drawing.Point(9, 217);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(52, 13);
+			this.label4.TabIndex = 17;
+			this.label4.Text = "Shear YX";
+			// 
+			// textBoxShearYX
+			// 
+			this.textBoxShearYX.Location = new System.Drawing.Point(12, 235);
+			this.textBoxShearYX.Name = "textBoxShearYX";
+			this.textBoxShearYX.Size = new System.Drawing.Size(42, 20);
+			this.textBoxShearYX.TabIndex = 16;
+			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(9, 176);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(52, 13);
+			this.label3.TabIndex = 15;
+			this.label3.Text = "Shear XZ";
+			// 
+			// textBoxShearXZ
+			// 
+			this.textBoxShearXZ.Location = new System.Drawing.Point(12, 194);
+			this.textBoxShearXZ.Name = "textBoxShearXZ";
+			this.textBoxShearXZ.Size = new System.Drawing.Size(42, 20);
+			this.textBoxShearXZ.TabIndex = 14;
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(9, 135);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(52, 13);
+			this.label2.TabIndex = 13;
+			this.label2.Text = "Shear XY";
+			// 
+			// textBoxShearXY
+			// 
+			this.textBoxShearXY.Location = new System.Drawing.Point(12, 153);
+			this.textBoxShearXY.Name = "textBoxShearXY";
+			this.textBoxShearXY.Size = new System.Drawing.Size(42, 20);
+			this.textBoxShearXY.TabIndex = 12;
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(109, 135);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(34, 13);
+			this.label1.TabIndex = 11;
+			this.label1.Text = "Scale";
 			// 
 			// button11
 			// 
@@ -255,188 +444,31 @@
 			this.pictureBox1.TabIndex = 3;
 			this.pictureBox1.TabStop = false;
 			// 
-			// label1
+			// textBoxApproxymation
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(109, 135);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(34, 13);
-			this.label1.TabIndex = 11;
-			this.label1.Text = "Scale";
+			this.textBoxApproxymation.Location = new System.Drawing.Point(19, 437);
+			this.textBoxApproxymation.Name = "textBoxApproxymation";
+			this.textBoxApproxymation.Size = new System.Drawing.Size(42, 20);
+			this.textBoxApproxymation.TabIndex = 33;
 			// 
-			// textBoxShearXY
+			// label11
 			// 
-			this.textBoxShearXY.Location = new System.Drawing.Point(12, 153);
-			this.textBoxShearXY.Name = "textBoxShearXY";
-			this.textBoxShearXY.Size = new System.Drawing.Size(42, 20);
-			this.textBoxShearXY.TabIndex = 12;
+			this.label11.AutoSize = true;
+			this.label11.Location = new System.Drawing.Point(16, 421);
+			this.label11.Name = "label11";
+			this.label11.Size = new System.Drawing.Size(73, 13);
+			this.label11.TabIndex = 34;
+			this.label11.Text = "Approximation";
 			// 
-			// label2
+			// button15
 			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(9, 135);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(52, 13);
-			this.label2.TabIndex = 13;
-			this.label2.Text = "Shear XY";
-			// 
-			// label3
-			// 
-			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(9, 176);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(52, 13);
-			this.label3.TabIndex = 15;
-			this.label3.Text = "Shear XZ";
-			// 
-			// textBoxShearXZ
-			// 
-			this.textBoxShearXZ.Location = new System.Drawing.Point(12, 194);
-			this.textBoxShearXZ.Name = "textBoxShearXZ";
-			this.textBoxShearXZ.Size = new System.Drawing.Size(42, 20);
-			this.textBoxShearXZ.TabIndex = 14;
-			// 
-			// label4
-			// 
-			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(9, 217);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(52, 13);
-			this.label4.TabIndex = 17;
-			this.label4.Text = "Shear YX";
-			// 
-			// textBoxShearYX
-			// 
-			this.textBoxShearYX.Location = new System.Drawing.Point(12, 235);
-			this.textBoxShearYX.Name = "textBoxShearYX";
-			this.textBoxShearYX.Size = new System.Drawing.Size(42, 20);
-			this.textBoxShearYX.TabIndex = 16;
-			// 
-			// label5
-			// 
-			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(9, 258);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(52, 13);
-			this.label5.TabIndex = 19;
-			this.label5.Text = "Shear YZ";
-			// 
-			// textBoxShearYZ
-			// 
-			this.textBoxShearYZ.Location = new System.Drawing.Point(12, 276);
-			this.textBoxShearYZ.Name = "textBoxShearYZ";
-			this.textBoxShearYZ.Size = new System.Drawing.Size(42, 20);
-			this.textBoxShearYZ.TabIndex = 18;
-			// 
-			// label6
-			// 
-			this.label6.AutoSize = true;
-			this.label6.Location = new System.Drawing.Point(9, 299);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(52, 13);
-			this.label6.TabIndex = 21;
-			this.label6.Text = "Shear ZX";
-			// 
-			// textBoxShearZX
-			// 
-			this.textBoxShearZX.Location = new System.Drawing.Point(12, 317);
-			this.textBoxShearZX.Name = "textBoxShearZX";
-			this.textBoxShearZX.Size = new System.Drawing.Size(42, 20);
-			this.textBoxShearZX.TabIndex = 20;
-			// 
-			// label7
-			// 
-			this.label7.AutoSize = true;
-			this.label7.Location = new System.Drawing.Point(9, 340);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(52, 13);
-			this.label7.TabIndex = 23;
-			this.label7.Text = "Shear ZY";
-			// 
-			// textBoxShearZY
-			// 
-			this.textBoxShearZY.Location = new System.Drawing.Point(12, 358);
-			this.textBoxShearZY.Name = "textBoxShearZY";
-			this.textBoxShearZY.Size = new System.Drawing.Size(42, 20);
-			this.textBoxShearZY.TabIndex = 22;
-			// 
-			// button12
-			// 
-			this.button12.Location = new System.Drawing.Point(12, 384);
-			this.button12.Name = "button12";
-			this.button12.Size = new System.Drawing.Size(55, 23);
-			this.button12.TabIndex = 24;
-			this.button12.Text = "Apply";
-			this.button12.UseVisualStyleBackColor = true;
-			this.button12.Click += new System.EventHandler(this.button12_Click);
-			// 
-			// label8
-			// 
-			this.label8.AutoSize = true;
-			this.label8.Location = new System.Drawing.Point(115, 258);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(39, 13);
-			this.label8.TabIndex = 26;
-			this.label8.Text = "OPP X";
-			// 
-			// textBoxOppX
-			// 
-			this.textBoxOppX.Location = new System.Drawing.Point(118, 276);
-			this.textBoxOppX.Name = "textBoxOppX";
-			this.textBoxOppX.Size = new System.Drawing.Size(42, 20);
-			this.textBoxOppX.TabIndex = 25;
-			// 
-			// label9
-			// 
-			this.label9.AutoSize = true;
-			this.label9.Location = new System.Drawing.Point(115, 299);
-			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(39, 13);
-			this.label9.TabIndex = 28;
-			this.label9.Text = "OPP Y";
-			// 
-			// textBoxOppY
-			// 
-			this.textBoxOppY.Location = new System.Drawing.Point(118, 317);
-			this.textBoxOppY.Name = "textBoxOppY";
-			this.textBoxOppY.Size = new System.Drawing.Size(42, 20);
-			this.textBoxOppY.TabIndex = 27;
-			// 
-			// label10
-			// 
-			this.label10.AutoSize = true;
-			this.label10.Location = new System.Drawing.Point(115, 340);
-			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(39, 13);
-			this.label10.TabIndex = 30;
-			this.label10.Text = "OPP Z";
-			// 
-			// textBoxOppZ
-			// 
-			this.textBoxOppZ.Location = new System.Drawing.Point(118, 358);
-			this.textBoxOppZ.Name = "textBoxOppZ";
-			this.textBoxOppZ.Size = new System.Drawing.Size(42, 20);
-			this.textBoxOppZ.TabIndex = 29;
-			// 
-			// button13
-			// 
-			this.button13.Location = new System.Drawing.Point(112, 384);
-			this.button13.Name = "button13";
-			this.button13.Size = new System.Drawing.Size(55, 23);
-			this.button13.TabIndex = 31;
-			this.button13.Text = "Apply";
-			this.button13.UseVisualStyleBackColor = true;
-			this.button13.Click += new System.EventHandler(this.button13_Click);
-			// 
-			// button14
-			// 
-			this.button14.Location = new System.Drawing.Point(33, 61);
-			this.button14.Name = "button14";
-			this.button14.Size = new System.Drawing.Size(117, 23);
-			this.button14.TabIndex = 32;
-			this.button14.Text = "Default";
-			this.button14.UseVisualStyleBackColor = true;
-			this.button14.Click += new System.EventHandler(this.button14_Click);
+			this.button15.Location = new System.Drawing.Point(67, 435);
+			this.button15.Name = "button15";
+			this.button15.Size = new System.Drawing.Size(55, 23);
+			this.button15.TabIndex = 35;
+			this.button15.Text = "Apply";
+			this.button15.UseVisualStyleBackColor = true;
+			this.button15.Click += new System.EventHandler(this.button15_Click);
 			// 
 			// Form1
 			// 
@@ -497,6 +529,9 @@
 		private System.Windows.Forms.TextBox textBoxShearXY;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button button14;
+		private System.Windows.Forms.Label label11;
+		private System.Windows.Forms.TextBox textBoxApproxymation;
+		private System.Windows.Forms.Button button15;
 	}
 }
 

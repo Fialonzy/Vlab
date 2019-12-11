@@ -269,5 +269,21 @@ namespace GeometricModeling
 		{
 			button11_Click(null, null);
 		}
+
+		private void button15_Click(object sender, EventArgs e)
+		{
+			if (_scene == null) return;
+			try
+			{
+				int n = Convert.ToInt32(textBoxApproxymation.Text);
+				textBoxApproxymation.Text = "";
+				_scene.Approximation(n);
+				_scene.Render(ref pictureBox1);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Не удалось изменить свойство аппроксимации.\n{ex.Message}");
+			}
+		}
 	}
 }

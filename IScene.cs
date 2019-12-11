@@ -12,10 +12,13 @@ namespace GeometricModeling
 	{
 		Size Size { get; set; }
 		void Render(ref Graphics plane);
+
 		void Render(ref PictureBox picture);
 
 		void Enter();
 
 		void Default();
+		
+		void Approximation(int countVertуx);
 	}
 }

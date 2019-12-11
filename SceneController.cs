@@ -22,8 +22,9 @@ namespace GeometricModeling
 		MatrixTransform _rotateMatrix = new MatrixTransform();
 		MatrixTransform _sceneAdjustment = new MatrixTransform();
 		Size _size;
+        int _approximation;
 
-		public List<Point> Points { get; set; }
+        public List<Point> Points { get; set; }
 		public List<Connection> Connections { get; set; }
 
 		/// <summary>
@@ -48,6 +49,7 @@ namespace GeometricModeling
 		{
 			_sceneAdjustment = new MatrixTransform();
 			_sceneAdjustment.Matrix[1, 1] = -1;
+			_approximation = 4;
 		}
 
 		public void Move(Point vector)
@@ -108,36 +110,62 @@ namespace GeometricModeling
 
 			// Отрисовать все точки и линии в соответствии с изменениями.
 
-			foreach (var point in Points)
-			{
-				Point p = point  * _scaleMatrix;
-				p *= _rotateMatrix;
-				p *= _movingMatrix;
-				p *= _shearMatrix;
-				p *= _oppMatrix;
-				p *= _sceneAdjustment;
-				plane.FillEllipse(new SolidBrush(Color.DarkRed), (float)(p.X - 1), (float)p.Y - 1, 2, 2);
-			}
+			//foreach (var point in Points)
+			//{
+			//	Point p = point  * _scaleMatrix;
+			//	p *= _rotateMatrix;
+			//	p *= _movingMatrix;
+			//	p *= _shearMatrix;
+			//	p *= _oppMatrix;
+			//	p *= _sceneAdjustment;
+			//	plane.FillEllipse(new SolidBrush(Color.DarkRed), (float)(p.X - 1), (float)p.Y - 1, 2, 2);
+			//}
 
 			foreach (var connect in Connections)
 			{
 				int count = connect.Connections.Count;
-				for (int i = 0; i < count - 1; i++)
+				if (count == 4)
 				{
-					int startPoint = connect.Connections[i];
-					int endPoint = connect.Connections[i + 1];
-					Point p1 = Points[startPoint]  * _scaleMatrix * _rotateMatrix * _movingMatrix * _shearMatrix * _oppMatrix * _sceneAdjustment ,
-						  p2 = Points[endPoint]  * _scaleMatrix * _rotateMatrix * _movingMatrix * _shearMatrix * _oppMatrix * _sceneAdjustment;
-					plane.DrawLine(new Pen(new SolidBrush(Color.Black), 1), (float)p1.X, (float)p1.Y, (float)p2.X, (float)p2.Y);
+					if (_approximation > 3){
+						Point[] localpoints = { Points[connect.Connections[0]],Points[connect.Connections[1]], Points[connect.Connections[2]], Points[connect.Connections[3]]};
+						List<Point> resultLine = new List<Point>();
+						for (int i = 0; i <= _approximation; i++)
+						{
+							Point p = new Point();
+							double t = (double)i / _approximation;
+							p =   localpoints[0] * ((1 - t) * (1 - t)) 
+								+ localpoints[1] * (2 * t * ((1 - t) * (1 - t)))
+								+ localpoints[2] * (2 * (t * t) * (1 - t))
+								+ localpoints[3] * (t * t);
+							resultLine.Add(p);
+						}
+						for (int i = 0; i < resultLine.Count - 1; i++)
+						{
+							Point p1 = resultLine[i]  * _scaleMatrix * _rotateMatrix * _movingMatrix * _shearMatrix * _oppMatrix * _sceneAdjustment ,
+								p2 = resultLine[i + 1]  * _scaleMatrix * _rotateMatrix * _movingMatrix * _shearMatrix * _oppMatrix * _sceneAdjustment;
+							plane.FillEllipse(new SolidBrush(Color.DarkRed), (float)(p1.X - 1), (float)p1.Y - 1, 2, 2);
+							plane.FillEllipse(new SolidBrush(Color.DarkRed), (float)(p2.X - 1), (float)p2.Y - 1, 2, 2);
+							plane.DrawLine(new Pen(new SolidBrush(Color.Black), 1), (float)p1.X, (float)p1.Y, (float)p2.X, (float)p2.Y);
+						}
+					}
 				}
+				else
+					for (int i = 0; i < count - 1; i++)
+					{
+						int startPoint = connect.Connections[i];
+						int endPoint = connect.Connections[i + 1];
+						Point p1 = Points[startPoint]  * _scaleMatrix * _rotateMatrix * _movingMatrix * _shearMatrix * _oppMatrix * _sceneAdjustment ,
+							p2 = Points[endPoint]  * _scaleMatrix * _rotateMatrix * _movingMatrix * _shearMatrix * _oppMatrix * _sceneAdjustment;
+						plane.DrawLine(new Pen(new SolidBrush(Color.Black), 1), (float)p1.X, (float)p1.Y, (float)p2.X, (float)p2.Y);
+					}
 			}
 
             // Нарисовать осевые линии
 
-			Point o = new Point() { H = 1 };
-			Point x = new Point() { H = 1, X = 20 };
-			Point y = new Point() { H = 1, Y = 20 };
-			Point z = new Point() { H = 1, Z = 20 };
+			Point o = new Point();
+			Point x = new Point(x:20);
+			Point y = new Point(y:20);
+			Point z = new Point(z:20);
 
 			var tempPoint1 = o * _scaleMatrix * _rotateMatrix * _movingMatrix * _shearMatrix * _oppMatrix * _sceneAdjustment;
 			var tempPoint2 = x * _scaleMatrix * _rotateMatrix * _movingMatrix * _shearMatrix * _oppMatrix * _sceneAdjustment;
@@ -154,6 +182,10 @@ namespace GeometricModeling
 
 			plane.DrawLine(new Pen(new SolidBrush(Color.Blue), 1), (float)tempPoint1.X, (float)tempPoint1.Y,
 				(float)tempPoint2.X, (float)tempPoint2.Y);
+		}
+
+		public void Approximation(int count){
+			_approximation = count;
 		}
 
 		public void Render(ref PictureBox picture)
