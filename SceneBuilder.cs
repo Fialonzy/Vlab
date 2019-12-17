@@ -15,7 +15,7 @@ namespace GeometricModeling
 		public SceneBuilder(SceneReader reader)
 		{
 			_reader = reader;
-			_sceneController = new SceneController();
+			//_sceneController = new SceneController();
 		}
 
 		public void ReadSceneFromFile(string path)
@@ -23,8 +23,9 @@ namespace GeometricModeling
 			List<Point> points;
 			List<Connection> connections;
 			_reader.ReadFile(path, out points, out connections);
-			_sceneController.Points = points;
-			_sceneController.Connections = connections;
+			_sceneController = new SceneController(points.ToArray(), connections.ToArray());
+			//_sceneController.Points = points;
+			//_sceneController.Connections = connections;
 		}
 
 		public void SetSizeScene(Size size)

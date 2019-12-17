@@ -23,8 +23,10 @@ namespace GeometricModeling
 		MatrixTransform _sceneAdjustment = new MatrixTransform();
 		Size _size;
         int _approximation;
+		private readonly Point[] points;
+		private readonly Connection[] connections;
 
-        public List<Point> Points { get; set; }
+		public List<Point> Points { get; set; }
 		public List<Connection> Connections { get; set; }
 
 		/// <summary>
@@ -46,48 +48,80 @@ namespace GeometricModeling
 		}
 
 
-		public SceneController()
+		public SceneController(Point[] points, Connection[] connections)
 		{
 			_sceneAdjustment = new MatrixTransform();
 			_sceneAdjustment.Matrix[1, 1] = -1;
 			_sceneAdjustment.Matrix[2, 2] = -1;
 			_approximation = 4;
+			this.points = points;
+			this.connections = connections;
+			RecalculateScene();
 		}
 
 		public void Move(Point vector)
 		{
-			_movingMatrix *= MatrixTransform.GetTranslation(vector);
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetTranslation(vector);
+			}
+			//_movingMatrix *= MatrixTransform.GetTranslation(vector);
 		}
 
 		public void MoveX(double distantion)
 		{
-			_movingMatrix *= MatrixTransform.GetTranslation(new Point() { X = distantion, H = 1.0 });
+
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetTranslation(new Point() { X = distantion, H = 1.0 });
+			}
+			//_movingMatrix *= MatrixTransform.GetTranslation(new Point() { X = distantion, H = 1.0 });
 
 		}
 
 		public void MoveY(double distantion)
 		{
-			_movingMatrix *= MatrixTransform.GetTranslation(new Point() { Y = distantion, H = 1.0 });  
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetTranslation(new Point() { Y = distantion, H = 1.0 });
+			}
+			//_movingMatrix *= MatrixTransform.GetTranslation(new Point() { Y = distantion, H = 1.0 });  
 		}
 
 		public void MoveZ(double distantion)
 		{
-			_movingMatrix *= MatrixTransform.GetTranslation(new Point() { Z = distantion, H = 1.0 });
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetTranslation(new Point() { Z = distantion, H = 1.0 });
+			}
+			//_movingMatrix *= MatrixTransform.GetTranslation(new Point() { Z = distantion, H = 1.0 });
 		}
 
 		public void OppX(double focus)
 		{
-			_oppMatrix *= MatrixTransform.GetOppX(focus);
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetOppX(focus);
+			}
+			//_oppMatrix *= MatrixTransform.GetOppX(focus);
 		}
 
 		public void OppY(double focus)
 		{
-			_oppMatrix *= MatrixTransform.GetOppY(focus);
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetOppY(focus);
+			}
+			//_oppMatrix *= MatrixTransform.GetOppY(focus);
 		}
 
 		public void OppZ(double focus)
 		{
-			_oppMatrix *= MatrixTransform.GetOppZ(focus);
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetOppZ(focus);
+			}
+			//_oppMatrix *= MatrixTransform.GetOppZ(focus);
 		}
 
         /// <summary>
@@ -95,11 +129,89 @@ namespace GeometricModeling
         /// </summary>
 		public void Default()
 		{
-			_movingMatrix = new MatrixTransform();
-			_oppMatrix = new MatrixTransform();
-			_rotateMatrix = new MatrixTransform();
-			_scaleMatrix = new MatrixTransform();
-			_shearMatrix = new MatrixTransform();
+			RecalculateScene();
+		}
+
+		public void RecalculateScene()
+		{
+			List<Point> points = new List<Point>();
+			List<Connection> lines = new List<Connection>();
+			// Исключительный случай и это поверхность образованная кривыми
+			if (connections.Length == 4 && connections[0].Connections.Count == 4 && connections[1].Connections.Count == 4 && connections[2].Connections.Count == 4 && connections[3].Connections.Count == 4)
+			{
+
+			}
+			else
+				foreach (var connect in connections)
+				{
+					int count = connect.Connections.Count;
+					// Если мы получили 4 точки соединения, то будем считать, что это кривая
+					if (count == 4)
+					{
+						// Если количество отрезков задано больше ноля, то считаем. 
+						// При 0 мы получаем исключение, деление на ноль.
+						if (_approximation > 0)
+						{
+							// Находим точки, на которых основывается кривая
+							Point[] localpoints = { this.points[connect.Connections[0]], this.points[connect.Connections[1]], this.points[connect.Connections[2]], this.points[connect.Connections[3]] };
+							List<Point> resultLine = new List<Point>();
+							for (int i = 0; i <= _approximation; i++)
+							{
+								// Считаем координаты точки по уравнению из методички
+
+								double x = 0, y = 0, z = 0, h = 0;
+								double t = (double)i / _approximation;
+
+								x = localpoints[0].X * ((1 - t) * (1 - t))
+									+ localpoints[1].X * (2 * t * ((1 - t) * (1 - t)))
+									+ localpoints[2].X * (2 * (t * t) * (1 - t))
+									+ localpoints[3].X * (t * t);
+
+								y = localpoints[0].Y * ((1 - t) * (1 - t))
+									+ localpoints[1].Y * (2 * t * ((1 - t) * (1 - t)))
+									+ localpoints[2].Y * (2 * (t * t) * (1 - t))
+									+ localpoints[3].Y * (t * t);
+
+								z = localpoints[0].Z * ((1 - t) * (1 - t))
+									+ localpoints[1].Z * (2 * t * ((1 - t) * (1 - t)))
+									+ localpoints[2].Z * (2 * (t * t) * (1 - t))
+									+ localpoints[3].Z * (t * t);
+
+								h = localpoints[0].H * ((1 - t) * (1 - t))
+									+ localpoints[1].H * (2 * t * ((1 - t) * (1 - t)))
+									+ localpoints[2].H * (2 * (t * t) * (1 - t))
+									+ localpoints[3].H * (t * t);
+
+								resultLine.Add(new Point(x, y, z, h));
+							}
+							for (int i = 0; i < resultLine.Count - 1; i++)
+							{
+								// Добавляем получившиеся точки в результирующий массив точек
+								points.Add(resultLine[i]);
+								points.Add(resultLine[i + 1]);
+								// Добавляем связь между точками
+								lines.Add(new Connection(points.Count - 2, points.Count - 1));
+							}
+						}
+					}
+					else
+						// В том случае, когда у нас не кривая, мы просто перебираем связи и строим линию
+						for (int i = 0; i < count - 1; i++)
+						{
+							int startPoint = connect.Connections[i];
+							int endPoint = connect.Connections[i + 1];
+							points.Add(this.points[startPoint]);
+							points.Add(this.points[endPoint]);
+							lines.Add(new Connection(points.Count - 2, points.Count - 1));
+						}
+				}
+			// Наконец получив все точки мы применяем к ним преобразования сцены и возвращаем
+			//for (int i = 0; i < points.Count; i++)
+			//{
+			//	points[i] = points[i] * _scaleMatrix * _rotateMatrix * _movingMatrix * _shearMatrix * _oppMatrix * _sceneAdjustment;
+			//}
+			Points = points;
+			Connections = lines;
 		}
 
 		/// <summary>
@@ -198,18 +310,19 @@ namespace GeometricModeling
 
 			// Вычислить все точки сцены
 
-			var scene = CalculateScene();
+			//var scene = CalculateScene();
 
 			// Нарисовать все точки
-			foreach (var point in scene.Item1)
+			foreach (var point in Points)
 			{
-				plane.FillEllipse(new SolidBrush(Color.DarkRed), (float)(point.X - 1), (float)point.Y - 1, 2, 2);
+				Point p = point * _sceneAdjustment;
+				plane.FillEllipse(new SolidBrush(Color.DarkRed), (float)(p.X - 1), (float)p.Y - 1, 2, 2);
 			}
 
 			// Нарисовать все линии
-			foreach (var line in scene.Item2)
+			foreach (var line in Connections)
 			{
-				Point p1 = scene.Item1[line.Connections.First()], p2 = scene.Item1[line.Connections.Last()];
+				Point p1 = Points[line.Connections.First()] * _sceneAdjustment, p2 = Points[line.Connections.Last()] * _sceneAdjustment ;
 				plane.DrawLine(new Pen(new SolidBrush(Color.Black), 1), (float)p1.X, (float)p1.Y, (float)p2.X, (float)p2.Y);
 			}
 
@@ -259,67 +372,119 @@ namespace GeometricModeling
 
 		public void RotateX(double angle)
 		{
-			_rotateMatrix *= MatrixTransform.GetRotateX(angle);
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetRotateX(angle);
+			}
+			//_rotateMatrix *= MatrixTransform.GetRotateX(angle);
 		}
 
 		public void RotateY(double angle)
 		{
-			_rotateMatrix *= MatrixTransform.GetRotateY(angle);
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetRotateY(angle);
+			}
+			//_rotateMatrix *= MatrixTransform.GetRotateY(angle);
 		}
 
 		public void RotateZ(double angle)
 		{
-			_rotateMatrix *= MatrixTransform.GetRotateZ(angle);
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetRotateZ(angle);
+			}
+			//_rotateMatrix *= MatrixTransform.GetRotateZ(angle);
 		}
 
 		public void Scale(double scale)
 		{
-			_scaleMatrix *= MatrixTransform.GetScaleX(scale) * MatrixTransform.GetScaleY(scale) * MatrixTransform.GetScaleZ(scale);
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetScaleX(scale) * MatrixTransform.GetScaleY(scale) * MatrixTransform.GetScaleZ(scale);
+			}
+			//_scaleMatrix *= MatrixTransform.GetScaleX(scale) * MatrixTransform.GetScaleY(scale) * MatrixTransform.GetScaleZ(scale);
 		}
 
 		public void ScaleX(double scale)
 		{
-			_scaleMatrix *= MatrixTransform.GetScaleX(scale);
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetScaleX(scale);
+			}
+			//_scaleMatrix *= MatrixTransform.GetScaleX(scale);
 		}
 
 		public void ScaleY(double scale)
 		{
-			_scaleMatrix *= MatrixTransform.GetScaleY(scale);
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetScaleY(scale);
+			}
+			//_scaleMatrix *= MatrixTransform.GetScaleY(scale);
 		}
 
 		public void ScaleZ(double scale)
 		{
-			_scaleMatrix *= MatrixTransform.GetScaleZ(scale);
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetScaleZ(scale);
+			}
+			//_scaleMatrix *= MatrixTransform.GetScaleZ(scale);
 		}
 
 		public void ShearXToY(double value)
 		{
-			_shearMatrix *= MatrixTransform.GetShearXToY(value);
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetShearXToY(value);
+			}
+			//_shearMatrix *= MatrixTransform.GetShearXToY(value);
 		}
 
 		public void ShearXToZ(double value)
 		{
-			_shearMatrix *= MatrixTransform.GetShearXToZ(value);
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetShearXToZ(value);
+			}
+			//_shearMatrix *= MatrixTransform.GetShearXToZ(value);
 		}
 
 		public void ShearYToX(double value)
 		{
-			_shearMatrix *= MatrixTransform.GetShearYToX(value);
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetShearYToX(value);
+			}
+			//_shearMatrix *= MatrixTransform.GetShearYToX(value);
 		}
 
 		public void ShearYToZ(double value)
 		{
-			_shearMatrix *= MatrixTransform.GetShearYToZ(value);
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetShearYToZ(value);
+			}
+			//_shearMatrix *= MatrixTransform.GetShearYToZ(value);
 		}
 
 		public void ShearZToX(double value)
 		{
-			_shearMatrix *= MatrixTransform.GetShearZToX(value);
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetShearZToX(value);
+			}
+			//_shearMatrix *= MatrixTransform.GetShearZToX(value);
 		}
 
 		public void ShearZToY(double value)
 		{
-			_shearMatrix *= MatrixTransform.GetShearZToY(value);
+			for (int i = 0; i < Points.Count; i++)
+			{
+				Points[i] = Points[i] * MatrixTransform.GetShearZToY(value);
+			}
+			//_shearMatrix *= MatrixTransform.GetShearZToY(value);
 		}
 
         /// <summary>
@@ -336,11 +501,12 @@ namespace GeometricModeling
 			// Вычислить габариты сцены(ширину, высоту и положение верхней левой точки)
 			RectangleF scene = GetScene();
 			// Смасштабировать с учётом сцены
+			Moving(scene);
 			Scaling(scene);
 			// Просчитать новые размеры сцены
-			scene = GetScene();
+			//scene = GetScene();
 			// Передвинуть сцену в начало координат
-			Moving(scene);
+			//RecalculateScene();
 		}
 
 		private void Moving(RectangleF scene)
@@ -348,7 +514,8 @@ namespace GeometricModeling
 			// Находим центр сцены
 			Point center = new Point((scene.Width / 2 + scene.X), (-scene.Height / 2 + scene.Y));
 			// Перемещаем на растояние Дельта от центра сцены до центра окна
-			_movingMatrix *= MatrixTransform.GetTranslation(new Point() { X = Size.Width/2-center.X, Y = -Size.Height / 2+center.Y, H = 1.0 });
+			Move(new Point() { X = - center.X, Y = -center.Y, H = 1.0 });
+			//_movingMatrix *= MatrixTransform.GetTranslation(new Point() { X = Size.Width/2-center.X, Y = -Size.Height / 2+center.Y, H = 1.0 });
 		}
 
 		private void Scaling(RectangleF scene)
@@ -360,19 +527,20 @@ namespace GeometricModeling
 			// Берём за основу масштаба ту ось, которая требует меньшего масштаба для вписания
 			double scale = scaleX < scaleY ? scaleX : scaleY;
 			// Масштабируем
-			_scaleMatrix *= MatrixTransform.GetScaleX(scale) * MatrixTransform.GetScaleY(scale) * MatrixTransform.GetScaleZ(scale);
+			Scale(scale);
+			//_scaleMatrix *= MatrixTransform.GetScaleX(scale) * MatrixTransform.GetScaleY(scale) * MatrixTransform.GetScaleZ(scale);
 		}
 
 		private RectangleF GetScene()
 		{
 			// Посчитать точки сцены
-			var scene = CalculateScene();
-			List<Point> points = new List<Point>(scene.Item1);
+			//var scene = CalculateScene();
+			//List<Point> points = new List<Point>(scene.Item1);
 
 			// Найти максимумы и минимумы по осям
 			double maxX = double.MinValue, maxY = double.MinValue,
 				minX = double.MaxValue, minY = double.MaxValue;
-			foreach (var point in points)
+			foreach (var point in Points)
 			{
 				maxX = point.X >= maxX ? point.X : maxX;
 				maxY = point.Y >= maxY ? point.Y : maxY;

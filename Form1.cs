@@ -278,6 +278,7 @@ namespace GeometricModeling
 				int n = Convert.ToInt32(textBoxApproxymation.Text);
 				textBoxApproxymation.Text = "";
 				_scene.Approximation(n);
+				((SceneController)_scene).RecalculateScene();
 				_scene.Render(ref pictureBox1);
 			}
 			catch (Exception ex)
