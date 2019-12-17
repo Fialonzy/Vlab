@@ -29,23 +29,37 @@ namespace GeometricModeling
             Z = z;
             H = h;
         }
-        public static Point operator * (Point point, double coefficient){
-            Point p = new Point();
-            p.X = point.X * coefficient;
-            p.Y = point.Y * coefficient;
-            p.Z = point.Z * coefficient;
-            //p.H = point.H * coefficient;
-            return p;
-        }
 
-        public static Point operator * (double coefficient,Point point){
+		public static bool operator ==(Point a, Point b)
+		{
+			if (a.X != b.X || a.Y != b.Y || a.Z != b.Z || a.H != b.H) return false;
+			return true;
+		}
+
+		public static bool operator !=(Point a, Point b)
+		{
+			return !(a==b);
+		}
+
+		public static Point operator * (Point point, double coefficient){
             Point p = new Point();
             p.X = point.X * coefficient;
             p.Y = point.Y * coefficient;
             p.Z = point.Z * coefficient;
-            //p.H = point.H * coefficient;
-            return p;
-        }
+			//p.H = point.H * coefficient;
+			//return Normalize(p);
+			return p;
+		}
+
+		public static Point operator * (double coefficient,Point point){
+            Point p = new Point();
+            p.X = point.X * coefficient;
+            p.Y = point.Y * coefficient;
+            p.Z = point.Z * coefficient;
+			//p.H = point.H * coefficient;
+			//return Normalize(p);
+			return p;
+		}
 
 		public static Point operator*(Point point, MatrixTransform matrix)
         {
@@ -55,22 +69,23 @@ namespace GeometricModeling
             p.Z = matrix.Matrix[0,2] * point[0] + matrix.Matrix[1,2] * point[1] + matrix.Matrix[2,2] * point[2] + matrix.Matrix[3,2] * point[3];
             p.H = matrix.Matrix[0,3] * point[0] + matrix.Matrix[1,3] * point[1] + matrix.Matrix[2,3] * point[2] + matrix.Matrix[3,3] * point[3];
 
-			p.X /= p.H;
-			p.Y /= p.H;
-			p.Z /= p.H;
-			p.H /= p.H;
 
-			return p;
-        }
+            return Normalize(p);
+		}
+
+		public static Point Normalize(Point p)
+		{
+			return new Point(p.X /= p.H, p.Y /= p.H, p.Z /= p.H);
+		}
 
         public static Point operator+(Point a, Point b){
             Point result = new Point();
             result.X = a.X + b.X;
             result.Y = a.Y + b.Y;
             result.Z = a.Z + b.Z;
-            //result.H = a.H + b.H;
-            // TODO: Normalize
-            return result;
+			//result.H = a.H + b.H;
+			//return Normalize(result);
+			return result;
         }
 
         public override string  ToString(){

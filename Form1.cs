@@ -40,7 +40,7 @@ namespace GeometricModeling
 			}
 			_sceneBuilder.SetSizeScene(pictureBox1.Size);
 			_scene = _sceneBuilder.Build();
-			_scene.Scale(trackBar1.Value);
+
 			_scene.Render(ref pictureBox1);
 		}
 
@@ -283,6 +283,22 @@ namespace GeometricModeling
 			catch (Exception ex)
 			{
 				MessageBox.Show($"Не удалось изменить свойство аппроксимации.\n{ex.Message}");
+			}
+		}
+
+		private void button16_Click(object sender, EventArgs e)
+		{
+			if (_scene == null) return;
+			try
+			{
+				double n = Convert.ToDouble(textBoxScale.Text);
+				textBoxScale.Text = "";
+				_scene.Scale(n);
+				_scene.Render(ref pictureBox1);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Не удалось изменить масштаб.\n{ex.Message}");
 			}
 		}
 	}

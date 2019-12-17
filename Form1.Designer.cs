@@ -31,6 +31,11 @@
 			this.button1 = new System.Windows.Forms.Button();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this.button16 = new System.Windows.Forms.Button();
+			this.textBoxScale = new System.Windows.Forms.TextBox();
+			this.button15 = new System.Windows.Forms.Button();
+			this.label11 = new System.Windows.Forms.Label();
+			this.textBoxApproxymation = new System.Windows.Forms.TextBox();
 			this.button14 = new System.Windows.Forms.Button();
 			this.button13 = new System.Windows.Forms.Button();
 			this.label10 = new System.Windows.Forms.Label();
@@ -54,7 +59,6 @@
 			this.textBoxShearXY = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.button11 = new System.Windows.Forms.Button();
-			this.trackBar1 = new System.Windows.Forms.TrackBar();
 			this.button10 = new System.Windows.Forms.Button();
 			this.button9 = new System.Windows.Forms.Button();
 			this.button8 = new System.Windows.Forms.Button();
@@ -65,11 +69,7 @@
 			this.button3 = new System.Windows.Forms.Button();
 			this.button2 = new System.Windows.Forms.Button();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
-			this.textBoxApproxymation = new System.Windows.Forms.TextBox();
-			this.label11 = new System.Windows.Forms.Label();
-			this.button15 = new System.Windows.Forms.Button();
 			this.panel1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -87,6 +87,8 @@
 			// 
 			this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.panel1.Controls.Add(this.button16);
+			this.panel1.Controls.Add(this.textBoxScale);
 			this.panel1.Controls.Add(this.button15);
 			this.panel1.Controls.Add(this.label11);
 			this.panel1.Controls.Add(this.textBoxApproxymation);
@@ -113,7 +115,6 @@
 			this.panel1.Controls.Add(this.textBoxShearXY);
 			this.panel1.Controls.Add(this.label1);
 			this.panel1.Controls.Add(this.button11);
-			this.panel1.Controls.Add(this.trackBar1);
 			this.panel1.Controls.Add(this.button10);
 			this.panel1.Controls.Add(this.button1);
 			this.panel1.Controls.Add(this.button9);
@@ -128,6 +129,49 @@
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(189, 640);
 			this.panel1.TabIndex = 2;
+			// 
+			// button16
+			// 
+			this.button16.Location = new System.Drawing.Point(106, 179);
+			this.button16.Name = "button16";
+			this.button16.Size = new System.Drawing.Size(55, 23);
+			this.button16.TabIndex = 37;
+			this.button16.Text = "Apply";
+			this.button16.UseVisualStyleBackColor = true;
+			this.button16.Click += new System.EventHandler(this.button16_Click);
+			// 
+			// textBoxScale
+			// 
+			this.textBoxScale.Location = new System.Drawing.Point(112, 153);
+			this.textBoxScale.Name = "textBoxScale";
+			this.textBoxScale.Size = new System.Drawing.Size(42, 20);
+			this.textBoxScale.TabIndex = 36;
+			// 
+			// button15
+			// 
+			this.button15.Location = new System.Drawing.Point(67, 435);
+			this.button15.Name = "button15";
+			this.button15.Size = new System.Drawing.Size(55, 23);
+			this.button15.TabIndex = 35;
+			this.button15.Text = "Apply";
+			this.button15.UseVisualStyleBackColor = true;
+			this.button15.Click += new System.EventHandler(this.button15_Click);
+			// 
+			// label11
+			// 
+			this.label11.AutoSize = true;
+			this.label11.Location = new System.Drawing.Point(16, 421);
+			this.label11.Name = "label11";
+			this.label11.Size = new System.Drawing.Size(73, 13);
+			this.label11.TabIndex = 34;
+			this.label11.Text = "Approximation";
+			// 
+			// textBoxApproxymation
+			// 
+			this.textBoxApproxymation.Location = new System.Drawing.Point(19, 437);
+			this.textBoxApproxymation.Name = "textBoxApproxymation";
+			this.textBoxApproxymation.Size = new System.Drawing.Size(42, 20);
+			this.textBoxApproxymation.TabIndex = 33;
 			// 
 			// button14
 			// 
@@ -322,18 +366,6 @@
 			this.button11.UseVisualStyleBackColor = true;
 			this.button11.Click += new System.EventHandler(this.button11_Click);
 			// 
-			// trackBar1
-			// 
-			this.trackBar1.Location = new System.Drawing.Point(67, 153);
-			this.trackBar1.Maximum = 35;
-			this.trackBar1.Minimum = 1;
-			this.trackBar1.Name = "trackBar1";
-			this.trackBar1.Size = new System.Drawing.Size(117, 45);
-			this.trackBar1.TabIndex = 9;
-			this.trackBar1.TickFrequency = 5;
-			this.trackBar1.Value = 1;
-			this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
-			// 
 			// button10
 			// 
 			this.button10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -444,32 +476,6 @@
 			this.pictureBox1.TabIndex = 3;
 			this.pictureBox1.TabStop = false;
 			// 
-			// textBoxApproxymation
-			// 
-			this.textBoxApproxymation.Location = new System.Drawing.Point(19, 437);
-			this.textBoxApproxymation.Name = "textBoxApproxymation";
-			this.textBoxApproxymation.Size = new System.Drawing.Size(42, 20);
-			this.textBoxApproxymation.TabIndex = 33;
-			// 
-			// label11
-			// 
-			this.label11.AutoSize = true;
-			this.label11.Location = new System.Drawing.Point(16, 421);
-			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(73, 13);
-			this.label11.TabIndex = 34;
-			this.label11.Text = "Approximation";
-			// 
-			// button15
-			// 
-			this.button15.Location = new System.Drawing.Point(67, 435);
-			this.button15.Name = "button15";
-			this.button15.Size = new System.Drawing.Size(55, 23);
-			this.button15.TabIndex = 35;
-			this.button15.Text = "Apply";
-			this.button15.UseVisualStyleBackColor = true;
-			this.button15.Click += new System.EventHandler(this.button15_Click);
-			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -484,7 +490,6 @@
 			this.Resize += new System.EventHandler(this.Form1_Resize);
 			this.panel1.ResumeLayout(false);
 			this.panel1.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
 			this.ResumeLayout(false);
 
@@ -505,7 +510,6 @@
 		private System.Windows.Forms.Button button3;
 		private System.Windows.Forms.Button button2;
 		private System.Windows.Forms.PictureBox pictureBox1;
-		private System.Windows.Forms.TrackBar trackBar1;
 		private System.Windows.Forms.Button button11;
 		private System.Windows.Forms.Button button13;
 		private System.Windows.Forms.Label label10;
@@ -532,6 +536,8 @@
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.TextBox textBoxApproxymation;
 		private System.Windows.Forms.Button button15;
+		private System.Windows.Forms.Button button16;
+		private System.Windows.Forms.TextBox textBoxScale;
 	}
 }
 

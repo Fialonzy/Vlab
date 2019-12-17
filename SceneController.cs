@@ -39,6 +39,7 @@ namespace GeometricModeling
 				// Делаем матрицу отражения относительно оси ОХ
 				_sceneAdjustment = new MatrixTransform();
 				_sceneAdjustment.Matrix[1, 1] = -1;
+				_sceneAdjustment.Matrix[2, 2] = -1;
 				// Переносим все координаты на растояния половины представления
 				_sceneAdjustment *= MatrixTransform.GetTranslation(new Point() { X = value.Width / 2, Y = value.Height / 2, H = 1.0 });
 			}
@@ -49,6 +50,7 @@ namespace GeometricModeling
 		{
 			_sceneAdjustment = new MatrixTransform();
 			_sceneAdjustment.Matrix[1, 1] = -1;
+			_sceneAdjustment.Matrix[2, 2] = -1;
 			_approximation = 4;
 		}
 
@@ -100,6 +102,87 @@ namespace GeometricModeling
 			_shearMatrix = new MatrixTransform();
 		}
 
+		/// <summary>
+		/// Метод для вычисления точек сцены. Он обрабатывает линии связи, если это кривая, то добавляет точек.
+		/// Преобразует точки с учётом сцены. 
+		/// </summary>
+		/// <returns>Возвращает готовый к визуализации массив точек и их связей.</returns>
+		private (List<Point>, List<Connection>) CalculateScene()
+		{
+			List<Point> points = new List<Point>();
+			List<Connection> lines = new List<Connection>();
+
+			foreach (var connect in Connections)
+			{
+				int count = connect.Connections.Count;
+				// Если мы получили 4 точки соединения, то будем считать, что это кривая
+				if (count == 4)
+				{
+					// Если количество отрезков задано больше ноля, то считаем. 
+					// При 0 мы получаем исключение, деление на ноль.
+					if (_approximation > 0)
+					{
+						// Находим точки, на которых основывается кривая
+						Point[] localpoints = { Points[connect.Connections[0]], Points[connect.Connections[1]], Points[connect.Connections[2]], Points[connect.Connections[3]] };
+						List<Point> resultLine = new List<Point>();
+						for (int i = 0; i <= _approximation; i++)
+						{
+							// Считаем координаты точки по уравнению из методички
+
+							double x = 0, y = 0, z = 0, h = 0;
+							double t = (double)i / _approximation;
+
+							x =   localpoints[0].X * ((1 - t) * (1 - t))
+								+ localpoints[1].X * (2 * t * ((1 - t) * (1 - t)))
+								+ localpoints[2].X * (2 * (t * t) * (1 - t))
+								+ localpoints[3].X * (t * t);
+
+							y =   localpoints[0].Y * ((1 - t) * (1 - t))
+								+ localpoints[1].Y * (2 * t * ((1 - t) * (1 - t)))
+								+ localpoints[2].Y * (2 * (t * t) * (1 - t))
+								+ localpoints[3].Y * (t * t);	 
+
+							z =   localpoints[0].Z * ((1 - t) * (1 - t))
+								+ localpoints[1].Z * (2 * t * ((1 - t) * (1 - t)))
+								+ localpoints[2].Z * (2 * (t * t) * (1 - t))
+								+ localpoints[3].Z * (t * t);
+
+							h =   localpoints[0].H * ((1 - t) * (1 - t))
+								+ localpoints[1].H * (2 * t * ((1 - t) * (1 - t)))
+								+ localpoints[2].H * (2 * (t * t) * (1 - t))
+								+ localpoints[3].H * (t * t);
+
+							resultLine.Add(new Point(x,y,z,h));
+						}
+						for (int i = 0; i < resultLine.Count - 1; i++)
+						{
+							// Добавляем получившиеся точки в результирующий массив точек
+							points.Add(resultLine[i]);
+							points.Add(resultLine[i + 1]);
+							// Добавляем связь между точками
+							lines.Add(new Connection(points.Count - 2, points.Count - 1));
+						}
+					}
+				}
+				else
+					// В том случае, когда у нас не кривая, мы просто перебираем связи и строим линию
+					for (int i = 0; i < count - 1; i++)
+					{
+						int startPoint = connect.Connections[i];
+						int endPoint = connect.Connections[i + 1];
+						points.Add(Points[startPoint]);
+						points.Add(Points[endPoint]);
+						lines.Add(new Connection(points.Count - 2, points.Count - 1));
+					}
+			}
+			// Наконец получив все точки мы применяем к ним преобразования сцены и возвращаем
+			for (int i = 0; i < points.Count; i++)
+			{
+				points[i] = points[i] * _scaleMatrix * _rotateMatrix * _movingMatrix * _shearMatrix * _oppMatrix * _sceneAdjustment;
+			}
+			return (points, lines);
+		}
+
 		public void Render(ref Graphics plane)
 		{
 
@@ -108,57 +191,24 @@ namespace GeometricModeling
 			plane.Clear(Color.White);
 			plane.DrawRectangle(new Pen(new SolidBrush(Color.Red), 1), 0F, 0F, _size.Width - 1, _size.Height - 1);
 
-			// Отрисовать все точки и линии в соответствии с изменениями.
+			// Вычислить все точки сцены
 
-			//foreach (var point in Points)
-			//{
-			//	Point p = point  * _scaleMatrix;
-			//	p *= _rotateMatrix;
-			//	p *= _movingMatrix;
-			//	p *= _shearMatrix;
-			//	p *= _oppMatrix;
-			//	p *= _sceneAdjustment;
-			//	plane.FillEllipse(new SolidBrush(Color.DarkRed), (float)(p.X - 1), (float)p.Y - 1, 2, 2);
-			//}
+			var scene = CalculateScene();
 
-			foreach (var connect in Connections)
+			// Нарисовать все точки
+			foreach (var point in scene.Item1)
 			{
-				int count = connect.Connections.Count;
-				if (count == 4)
-				{
-					if (_approximation > 3){
-						Point[] localpoints = { Points[connect.Connections[0]],Points[connect.Connections[1]], Points[connect.Connections[2]], Points[connect.Connections[3]]};
-						List<Point> resultLine = new List<Point>();
-						for (int i = 0; i <= _approximation; i++)
-						{
-							Point p = new Point();
-							double t = (double)i / _approximation;
-							p =   localpoints[0] * ((1 - t) * (1 - t)) 
-								+ localpoints[1] * (2 * t * ((1 - t) * (1 - t)))
-								+ localpoints[2] * (2 * (t * t) * (1 - t))
-								+ localpoints[3] * (t * t);
-							resultLine.Add(p);
-						}
-						for (int i = 0; i < resultLine.Count - 1; i++)
-						{
-							Point p1 = resultLine[i]  * _scaleMatrix * _rotateMatrix * _movingMatrix * _shearMatrix * _oppMatrix * _sceneAdjustment ,
-								p2 = resultLine[i + 1]  * _scaleMatrix * _rotateMatrix * _movingMatrix * _shearMatrix * _oppMatrix * _sceneAdjustment;
-							plane.FillEllipse(new SolidBrush(Color.DarkRed), (float)(p1.X - 1), (float)p1.Y - 1, 2, 2);
-							plane.FillEllipse(new SolidBrush(Color.DarkRed), (float)(p2.X - 1), (float)p2.Y - 1, 2, 2);
-							plane.DrawLine(new Pen(new SolidBrush(Color.Black), 1), (float)p1.X, (float)p1.Y, (float)p2.X, (float)p2.Y);
-						}
-					}
-				}
-				else
-					for (int i = 0; i < count - 1; i++)
-					{
-						int startPoint = connect.Connections[i];
-						int endPoint = connect.Connections[i + 1];
-						Point p1 = Points[startPoint]  * _scaleMatrix * _rotateMatrix * _movingMatrix * _shearMatrix * _oppMatrix * _sceneAdjustment ,
-							p2 = Points[endPoint]  * _scaleMatrix * _rotateMatrix * _movingMatrix * _shearMatrix * _oppMatrix * _sceneAdjustment;
-						plane.DrawLine(new Pen(new SolidBrush(Color.Black), 1), (float)p1.X, (float)p1.Y, (float)p2.X, (float)p2.Y);
-					}
+				plane.FillEllipse(new SolidBrush(Color.DarkRed), (float)(point.X - 1), (float)point.Y - 1, 2, 2);
 			}
+
+			// Нарисовать все линии
+			foreach (var line in scene.Item2)
+			{
+				Point p1 = scene.Item1[line.Connections.First()], p2 = scene.Item1[line.Connections.Last()];
+				plane.DrawLine(new Pen(new SolidBrush(Color.Black), 1), (float)p1.X, (float)p1.Y, (float)p2.X, (float)p2.Y);
+			}
+
+			
 
             // Нарисовать осевые линии
 
@@ -184,6 +234,10 @@ namespace GeometricModeling
 				(float)tempPoint2.X, (float)tempPoint2.Y);
 		}
 
+		/// <summary>
+		/// Метод для принятия нового значения апроксимации кривых(1/N, где N -- количество отрезков кривой). 
+		/// </summary>
+		/// <param name="count">Количество отрезков кривой</param>
 		public void Approximation(int count){
 			_approximation = count;
 		}
@@ -215,7 +269,7 @@ namespace GeometricModeling
 
 		public void Scale(double scale)
 		{
-			_scaleMatrix = MatrixTransform.GetScaleX(scale) * MatrixTransform.GetScaleY(scale) * MatrixTransform.GetScaleZ(scale);
+			_scaleMatrix *= MatrixTransform.GetScaleX(scale) * MatrixTransform.GetScaleY(scale) * MatrixTransform.GetScaleZ(scale);
 		}
 
 		public void ScaleX(double scale)
@@ -268,62 +322,49 @@ namespace GeometricModeling
         /// </summary>
 		public void Enter()
 		{
-			bool isFull = false;
-			// Пока сцена не вписана повторяем перенос и масштабирование
-			// Такой алгоритм нужен для того, чтобы при ОПП корректно вписывать. 
-			// Так как при перемещении и маштабировании по отдельности размеры сцены могут меняться.
-			do
-			{
-				RectangleF scene = GetScene();
-				Scaling(scene);
-				scene = GetScene();
-				Moving(scene);
-				scene = GetScene();
-                /* Достаточно сложное условие получилось
-				 * Тут главное что ширина и высота получившейся сцены должны быть меньше размеров представления на 10 пикселей
-				 * Но чтобы как минимум одна из размерностей была больше размерности представления при прибавлении 20 пикселей
-				 * Иными словами: недостаточно уменьшить изображение чтобы оно вписалось, нужно ещё его приблизить, если оно маленькое.
-				 * Затем смотрю центр сцены, если он находится в начале координат, то ок. Иначе продолжаем преобразовывать
-				 */
-				if (scene.Width + 10 <= Size.Width && scene.Height + 10 <= Size.Height && 
-					(scene.Width + 20 >= Size.Width || scene.Height + 20 >= Size.Height) && 
-					Math.Round(scene.Width + scene.X) == Math.Round(scene.Width /2) && Math.Round(scene.Height - scene.Y) == Math.Round(scene.Height / 2))
-					isFull = true;
-			}
-			while (!isFull);
+			/*
+			 * Можно реализовать это немного иначе:
+			 * Сначала переместить сцену в центр, а потом масштабировать.
+			 * Но данный вариант тоже пригодный.
+			 */
 
-
-			
+			// Вычислить габариты сцены(ширину, высоту и положение верхней левой точки)
+			RectangleF scene = GetScene();
+			// Смасштабировать с учётом сцены
+			Scaling(scene);
+			// Просчитать новые размеры сцены
+			scene = GetScene();
+			// Передвинуть сцену в начало координат
+			Moving(scene);
 		}
 
 		private void Moving(RectangleF scene)
 		{
-			PointF center = new PointF((float)(scene.Width / 2 + scene.X), (float)(-scene.Height / 2 + scene.Y));
-			_movingMatrix *= MatrixTransform.GetTranslation(new Point() { X = -center.X, Y = -center.Y, H = 1.0 });
+			// Находим центр сцены
+			Point center = new Point((scene.Width / 2 + scene.X), (-scene.Height / 2 + scene.Y));
+			// Перемещаем на растояние Дельта от центра сцены до центра окна
+			_movingMatrix *= MatrixTransform.GetTranslation(new Point() { X = Size.Width/2-center.X, Y = -Size.Height / 2+center.Y, H = 1.0 });
 		}
 
 		private void Scaling(RectangleF scene)
 		{
+			// Узнаём во сколько раз ширина сцены больше или меньше, чем ширина окна
 			double scaleX = (Size.Width - 10) / scene.Width;
+			// Узнаём во сколько раз высота сцены больше или меньше, чем высота окна
 			double scaleY = (Size.Height - 10) / scene.Height;
+			// Берём за основу масштаба ту ось, которая требует меньшего масштаба для вписания
 			double scale = scaleX < scaleY ? scaleX : scaleY;
+			// Масштабируем
 			_scaleMatrix *= MatrixTransform.GetScaleX(scale) * MatrixTransform.GetScaleY(scale) * MatrixTransform.GetScaleZ(scale);
 		}
 
 		private RectangleF GetScene()
 		{
-			List<Point> points = new List<Point>();
+			// Посчитать точки сцены
+			var scene = CalculateScene();
+			List<Point> points = new List<Point>(scene.Item1);
 
-			foreach (var point in Points)
-			{
-				Point p = point * _scaleMatrix;
-				p *= _rotateMatrix;
-				p *= _movingMatrix;
-				p *= _shearMatrix;
-				p *= _oppMatrix;
-				points.Add(p);
-			}
-
+			// Найти максимумы и минимумы по осям
 			double maxX = double.MinValue, maxY = double.MinValue,
 				minX = double.MaxValue, minY = double.MaxValue;
 			foreach (var point in points)
@@ -334,6 +375,7 @@ namespace GeometricModeling
 				minX = point.X <= minX ? point.X : minX;
 				minY = point.Y <= minY ? point.Y : minY;
 			}
+			// Вернуть прямоугольник, который составлен из максимумов и минимумов
 			return new RectangleF((float)minX, (float)maxY, (float)(maxX - minX), (float)(maxY - minY));
 		}
 	}
