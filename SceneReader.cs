@@ -30,6 +30,12 @@ namespace GeometricModeling{
 
 			GetPoint(lines.GetRange(1, countPoint));
 
+			if (lines[countPoint + 1].Contains("1_"))
+			{
+				GetConnections(lines.GetRange(1 + countPoint + 1, 4));
+				return;
+			}
+
 			if (!int.TryParse(lines[countPoint + 1], out countLine)) return;
 			if (countLine < 1) return;
 			if (lines.Count < countPoint + countLine + 2) throw new Exception(" оличество строк меньше количества св€зей.");

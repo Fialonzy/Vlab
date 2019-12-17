@@ -111,7 +111,12 @@ namespace GeometricModeling
 		{
 			List<Point> points = new List<Point>();
 			List<Connection> lines = new List<Connection>();
+			// Исключительный случай и это поверхность образованная кривыми
+			if(Connections.Count == 4 && Connections[0].Connections.Count == 4 && Connections[1].Connections.Count == 4 && Connections[2].Connections.Count == 4 && Connections[3].Connections.Count == 4)
+			{
 
+			}
+			else
 			foreach (var connect in Connections)
 			{
 				int count = connect.Connections.Count;
