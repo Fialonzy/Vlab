@@ -18,6 +18,8 @@ namespace GeometricModeling
 			_connections = new List<int>(connect);
 		}
 
+		public void AddPointIndex(int index) => _connections.Add(index);
+
 		public IReadOnlyList<int> Connections { get => _connections; }
 	}
 }

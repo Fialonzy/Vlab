@@ -30,17 +30,37 @@ namespace GeometricModeling{
 
 			GetPoint(lines.GetRange(1, countPoint));
 
-			//if (lines[countPoint + 1].Contains("1_"))
-			//{
-			//	GetConnections(lines.GetRange(1 + countPoint + 1, 4));
-			//	return;
-			//}
+			if (lines[countPoint + 1].Contains("_"))
+			{
+				int planeCount = 0;
+				planeCount = Convert.ToInt32(lines[countPoint + 1].Substring(0, 1));
+				_connections = new Connection[planeCount];
+				for (int i = 0; i < planeCount; i++)
+				{
+					_connections[i] = GetConnectionsList(lines.GetRange(1 + countPoint + 1 + i * 4, 4));
+				}
+				return;
+			}
 
 			if (!int.TryParse(lines[countPoint + 1], out countLine)) return;
 			if (countLine < 1) return;
 			if (lines.Count < countPoint + countLine + 2) throw new Exception(" оличество строк меньше количества св€зей.");
 
 			GetConnections(lines.GetRange(1 + countPoint + 1, countLine));
+		}
+
+		private Connection GetConnectionsList(List<string> lines)
+		{
+			Connection result = new Connection();
+			for (int i = 0; i < 4; i++)
+			{
+				var c = ReadConnection(lines[i]);
+				result.AddPointIndex(c.Connections[0]);
+				result.AddPointIndex(c.Connections[1]);
+				result.AddPointIndex(c.Connections[2]);
+				result.AddPointIndex(c.Connections[3]);
+			}
+			return result;
 		}
 
 		private void GetConnections(List<string> lines)

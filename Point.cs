@@ -46,8 +46,8 @@ namespace GeometricModeling
             p.X = point.X * coefficient;
             p.Y = point.Y * coefficient;
             p.Z = point.Z * coefficient;
-			//p.H = point.H * coefficient;
-			//return Normalize(p);
+			p.H = point.H * coefficient;
+			return Normalize(p);
 			return p;
 		}
 
@@ -56,8 +56,8 @@ namespace GeometricModeling
             p.X = point.X * coefficient;
             p.Y = point.Y * coefficient;
             p.Z = point.Z * coefficient;
-			//p.H = point.H * coefficient;
-			//return Normalize(p);
+			p.H = point.H * coefficient;
+			return Normalize(p);
 			return p;
 		}
 
@@ -83,8 +83,8 @@ namespace GeometricModeling
             result.X = a.X + b.X;
             result.Y = a.Y + b.Y;
             result.Z = a.Z + b.Z;
-			//result.H = a.H + b.H;
-			//return Normalize(result);
+			result.H = a.H + b.H;
+			return Normalize(result);
 			return result;
         }
 
